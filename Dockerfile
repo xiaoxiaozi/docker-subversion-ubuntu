@@ -12,7 +12,7 @@ RUN apt-get update \
 	&& apt-get install -y bash tzdata \
 	apache2 \
     subversion \
-    libapache2-svn
+    libapache2-svn \
 	&& echo ${TZ} > /etc/timezone
 	
 RUN rm -rf /var/www/html/*; rm -rf /etc/apache2/sites-enabled/*; \
