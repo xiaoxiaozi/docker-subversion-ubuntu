@@ -8,27 +8,18 @@ ARG TZ='Asia/Shanghai'
 
 ENV TZ ${TZ}
 
-RUN apt-get upgrade \
-	&& apt-get install bash tzdata runit \
+RUN apt-get update \
+	&& apt-get install -y bash tzdata \
 	apache2 \
-	apache2-webdav \
-	subversion \
-    mod_dav_svn \
+    subversion \
+    libapache2-svn
 	&& echo ${TZ} > /etc/timezone
 	
 RUN rm -rf /var/www/html/*; rm -rf /etc/apache2/sites-enabled/*; \
     mkdir -p /etc/apache2/external
 
-ADD dav_svn.conf /etc/apache2/conf.d/dav_svn.conf
+ADD dav_svn.conf /etc/apache2/mods-available/dav_svn.conf
 
 VOLUME ["/var/local/svn"]
 
-SHELL ["/bin/bash"]
-
-COPY runit /etc/service
-COPY entrypoint.sh /entrypoint.sh
-
-RUN ["chmod", "777", "/etc/service", "-R"]
-RUN ["chmod", "+x", "/entrypoint.sh"]
-
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
